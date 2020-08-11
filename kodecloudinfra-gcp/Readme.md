@@ -12,6 +12,17 @@ Install terrafrom
 
 https://learn.hashicorp.com/tutorials/terraform/install-cli
 
+Download the Terraform file. 
+
+Make sure you are keeping the json key in particular path.
+
+RUN  ' terraform init ' to download the provider plugin. Here it is Google. 
+
+RUN  ' terraform plan ' it will show how resources will be created. 
+
+RUN  ' terraform validate' just to verify configuration file is proper or not. 
+
+RUN  ' terraform apply '. it will create the resources once you agree with the prompt with ' yes'. 
 
 Go to IAM create a service account and generate the json key.
 
