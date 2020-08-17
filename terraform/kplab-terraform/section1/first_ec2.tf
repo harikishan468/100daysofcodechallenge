@@ -1,12 +1,12 @@
 provider "aws" {
-  region     = "us-west-2"
-  access_key = "AKIAT5JUOVB2QLEAFYI7"
-  secret_key = "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"
+  region     = "us-east-1"
+  access_key = "AKIAREHHM4R7NRWKJQFX"
+  secret_key = "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"
 }
 
 
 resource "aws_instance" "myec2" {
-  ami= "ami-08f3d892de259504d"
+  ami= "ami-09d8b5222f2b93bf0"
   instance_type = "t2.micro"
 }
 
