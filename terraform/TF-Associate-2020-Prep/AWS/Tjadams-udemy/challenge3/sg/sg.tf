@@ -1,30 +1,3 @@
-provider "aws" {
-    region = "us-east-1"
-}
-
-resource "aws_instance" "db" {
-  ami           = "ami-09d8b5222f2b93bf0"
-  instance_type = "t2.micro"
-
-  tags = {
-    Name = "DB Server"
-  }
-}
-
-resource "aws_instance" "web" {
-  ami           = "ami-09d8b5222f2b93bf0"
-  instance_type = "t2.micro"
-  security_groups = [aws_security_group.web_traffic.name]
-  user_data = file("server-script.sh")
-
-  tags = {
-    Name = "web server"
-  }
-}
-
-resource "aws_eip" "eip" {
-  instance = aws_instance.web.id
-}
 
 variable "ingressrules" {
     type = list(number)
@@ -68,11 +41,6 @@ resource "aws_security_group" "web_traffic" {
   }
 }
 
-output "PrivateIP" {
-    value = module.db.PrivateIP
+output "sg_name" {
+    value = aws_security_group.web_traffic.name
 }
-
-output "PublicIP" {
-    value = module.eip.PublicIP
-}
-
