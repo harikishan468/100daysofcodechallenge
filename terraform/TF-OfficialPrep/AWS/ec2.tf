@@ -1,4 +1,4 @@
-#VPC creation
+# VPC creation
 
 resource "aws_vpc" "tf_vpc" {
   cidr_block       = "10.0.0.0/16"
@@ -8,6 +8,52 @@ resource "aws_vpc" "tf_vpc" {
     Name = "terraform_vpc"
   }
 }
+
+# Create internet Gateway
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.tf_vpc.id
+}
+
+#3 Create  Custom Route table
+
+resource "aws_route_table" "tf-route-table" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  route {
+    ipv6_cidr_block = "::/0"
+    gateway_id      = aws_internet_gateway.gw.id
+  }
+
+  tags = {
+    Name = "Prod"
+  }
+}
+
+#4 . Create a subnet
+resource "aws_subnet" "tf-subnet-1" {
+  vpc_id            = aws_vpc.tf_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name = "tf-test-subnet"
+  }
+}
+
+#5 . Associate Route table 
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.tf-subnet-1.id
+  route_table_id = aws_route_table.tf-route-table.id
+}
+
+
 
 # EC2 KEY PAIR creation
 
@@ -21,6 +67,7 @@ resource "aws_key_pair" "ec2key" {
 resource "aws_security_group" "allow_connect" {
   name        = "allow_ssh_http"
   description = "Allow SSH inbound traffic"
+  vpc_id      = aws_vpc.tf_vpc.id
 
   ingress {
     description = "SSH to VPC"
@@ -56,6 +103,7 @@ resource "aws_instance" "myec2" {
   key_name        = aws_key_pair.ec2key.key_name
   ami             = "ami-0761dd91277e34178"
   instance_type   = "t2.micro"
+  subnet_id       = aws_subnet.tf-subnet-1.id
   security_groups = [aws_security_group.allow_connect.name]
 
   connection {
