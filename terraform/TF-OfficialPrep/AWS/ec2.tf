@@ -1,8 +1,22 @@
-resource "aws_key_pair" "example" {
+#VPC creation
+
+resource "aws_vpc" "tf_vpc" {
+  cidr_block       = "10.0.0.0/16"
+  instance_tenancy = "default"
+
+  tags = {
+    Name = "terraform_vpc"
+  }
+}
+
+# EC2 KEY PAIR creation
+
+resource "aws_key_pair" "ec2key" {
   key_name   = "examplekey"
   public_key = file("~/.ssh/terraform.pub")
 }
 
+# EC2 SG creation
 
 resource "aws_security_group" "allow_connect" {
   name        = "allow_ssh_http"
@@ -36,8 +50,10 @@ resource "aws_security_group" "allow_connect" {
   }
 }
 
-resource "aws_instance" "example" {
-  key_name        = aws_key_pair.example.key_name
+#EC2 instance creation 
+
+resource "aws_instance" "myec2" {
+  key_name        = aws_key_pair.ec2key.key_name
   ami             = "ami-0761dd91277e34178"
   instance_type   = "t2.micro"
   security_groups = [aws_security_group.allow_connect.name]
@@ -50,7 +66,7 @@ resource "aws_instance" "example" {
   }
 
   provisioner "local-exec" {
-    command = "echo ${aws_instance.example.public_ip} > ip_address.txt"
+    command = "echo ${aws_instance.myec2.public_ip} > ip_address.txt"
   }
 
   provisioner "remote-exec" {

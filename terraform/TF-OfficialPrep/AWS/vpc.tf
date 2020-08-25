@@ -1,5 +1,5 @@
-
-resource "aws_vpc" "main" {
+/*
+resource "aws_vpc" "tf_vpc" {
   cidr_block       = "10.0.0.0/16"
   instance_tenancy = "default"
 
@@ -7,4 +7,4 @@ resource "aws_vpc" "main" {
     Name = "terraform_vpc"
   }
 }
-
+*/
