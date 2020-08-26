@@ -1,4 +1,4 @@
-# VPC creation
+#1 VPC creation
 
 resource "aws_vpc" "tf_vpc" {
   cidr_block       = "10.0.0.0/16"
@@ -9,13 +9,24 @@ resource "aws_vpc" "tf_vpc" {
   }
 }
 
-# Create internet Gateway
+#2 Create a subnet
+resource "aws_subnet" "tf-subnet-1" {
+  vpc_id            = aws_vpc.tf_vpc.id
+  cidr_block        = "10.0.1.0/24"
+  availability_zone = "us-east-1a"
+
+  tags = {
+    Name = "tf-test-subnet"
+  }
+}
+
+#3 Create internet Gateway
 
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.tf_vpc.id
 }
 
-#3 Create  Custom Route table
+#4 Create  Custom Route table
 
 resource "aws_route_table" "tf-route-table" {
   vpc_id = aws_vpc.tf_vpc.id
@@ -35,18 +46,8 @@ resource "aws_route_table" "tf-route-table" {
   }
 }
 
-#4 . Create a subnet
-resource "aws_subnet" "tf-subnet-1" {
-  vpc_id            = aws_vpc.tf_vpc.id
-  cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1a"
 
-  tags = {
-    Name = "tf-test-subnet"
-  }
-}
-
-#5 . Associate Route table 
+#5. Associate Route table 
 
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.tf-subnet-1.id
@@ -55,14 +56,14 @@ resource "aws_route_table_association" "a" {
 
 
 
-# EC2 KEY PAIR creation
+#6 EC2 KEY PAIR creation
 
 resource "aws_key_pair" "ec2key" {
   key_name   = "examplekey"
   public_key = file("~/.ssh/terraform.pub")
 }
 
-# EC2 SG creation
+#7 EC2 SG creation
 
 resource "aws_security_group" "allow_connect" {
   name        = "allow_ssh_http"
@@ -97,14 +98,17 @@ resource "aws_security_group" "allow_connect" {
   }
 }
 
+/*
 #EC2 instance creation 
 
 resource "aws_instance" "myec2" {
-  key_name        = aws_key_pair.ec2key.key_name
-  ami             = "ami-0761dd91277e34178"
-  instance_type   = "t2.micro"
-  subnet_id       = aws_subnet.tf-subnet-1.id
-  security_groups = [aws_security_group.allow_connect.name]
+  key_name          = aws_key_pair.ec2key.key_name
+  ami               = "ami-0761dd91277e34178"
+  instance_type     = "t2.micro"
+  availability_zone = "us-east-1a"
+  subnet_id         = aws_subnet.tf-subnet-1.id
+  security_groups   = aws_security_group.allow_connect.id
+
 
   connection {
     type        = "ssh"
@@ -126,3 +130,5 @@ resource "aws_instance" "myec2" {
     ]
   }
 }
+
+*/
