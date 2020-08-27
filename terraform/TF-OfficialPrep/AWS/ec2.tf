@@ -134,12 +134,12 @@ output "custom_sg_id" {
 #EC2 instance creation 
 
 resource "aws_instance" "myec2" {
-  key_name               = aws_key_pair.ec2key.key_name
-  ami                    = "ami-0761dd91277e34178"
-  instance_type          = "t2.micro"
-  availability_zone      = "us-east-1a"
-  subnet_id              = aws_subnet.tf-subnet-1.id
-  vpc_security_group_ids = ["aws_security_group.allow_connect.id"]
+  key_name          = aws_key_pair.ec2key.key_name
+  ami               = "ami-0761dd91277e34178"
+  instance_type     = "t2.micro"
+  availability_zone = "us-east-1a"
+  subnet_id         = aws_subnet.tf-subnet-1.id
+  security_groups   = [aws_security_group.allow_connect.name]
 
 
 
