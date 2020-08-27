@@ -98,7 +98,7 @@ resource "aws_security_group" "allow_connect" {
   }
 }
 
-/*
+
 #EC2 instance creation 
 
 resource "aws_instance" "myec2" {
@@ -107,7 +107,7 @@ resource "aws_instance" "myec2" {
   instance_type     = "t2.micro"
   availability_zone = "us-east-1a"
   subnet_id         = aws_subnet.tf-subnet-1.id
-  security_groups   = aws_security_group.allow_connect.id
+  security_groups   = ["aws_security_group.allow_connect.id"]
 
 
   connection {
@@ -130,5 +130,3 @@ resource "aws_instance" "myec2" {
     ]
   }
 }
-
-*/
