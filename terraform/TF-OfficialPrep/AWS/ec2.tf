@@ -9,15 +9,28 @@ resource "aws_vpc" "tf_vpc" {
   }
 }
 
+# VPC OPTPUT 
+
+output "custom_vpc_name" {
+  value = aws_vpc.tf_vpc.id
+}
+
 #2 Create a subnet
+
 resource "aws_subnet" "tf-subnet-1" {
   vpc_id            = aws_vpc.tf_vpc.id
   cidr_block        = "10.0.1.0/24"
   availability_zone = "us-east-1a"
 
   tags = {
-    Name = "tf-test-subnet"
+    Name = "tf-prod-subnet"
   }
+}
+
+# SUBNET OUTPUT
+
+output "custom_subnet_id" {
+  value = aws_subnet.tf-subnet-1.id
 }
 
 #3 Create internet Gateway
@@ -25,6 +38,14 @@ resource "aws_subnet" "tf-subnet-1" {
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.tf_vpc.id
 }
+
+# GATEWAY OUTPUT
+
+
+output "custom_igw" {
+  value = aws_internet_gateway.gw.id
+}
+
 
 #4 Create  Custom Route table
 
@@ -42,8 +63,15 @@ resource "aws_route_table" "tf-route-table" {
   }
 
   tags = {
-    Name = "Prod"
+    Name = "TF_Prod"
   }
+}
+
+# ROUTETABLE OUTPUT
+
+
+output "custom_rt" {
+  value = aws_route_table.tf-route-table.id
 }
 
 
@@ -94,20 +122,25 @@ resource "aws_security_group" "allow_connect" {
   }
 
   tags = {
-    Name = "allow_ssh_http"
+    Name = "allow_ssh_http_rule"
   }
+}
+
+output "custom_sg_id" {
+  value = aws_security_group.allow_connect.id
 }
 
 
 #EC2 instance creation 
 
 resource "aws_instance" "myec2" {
-  key_name          = aws_key_pair.ec2key.key_name
-  ami               = "ami-0761dd91277e34178"
-  instance_type     = "t2.micro"
-  availability_zone = "us-east-1a"
-  subnet_id         = aws_subnet.tf-subnet-1.id
-  security_groups   = ["aws_security_group.allow_connect.id"]
+  key_name               = aws_key_pair.ec2key.key_name
+  ami                    = "ami-0761dd91277e34178"
+  instance_type          = "t2.micro"
+  availability_zone      = "us-east-1a"
+  subnet_id              = aws_subnet.tf-subnet-1.id
+  vpc_security_group_ids = ["aws_security_group.allow_connect.id"]
+
 
 
   connection {
